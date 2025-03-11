@@ -48,5 +48,5 @@ jobs:
           - name: Finish Approval
             run: echo "Approval for greeting has been completed"
           
-            - name: Greet the person
+          - name: Greet the person
             run: echo "Hello, ${{ github.event.inputs.name }}!"
