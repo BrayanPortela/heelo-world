@@ -83,7 +83,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Scale SE-Server
-              uses: ./.github/workflows/scale_request_action.yml
+              uses: ./.github/action/se-scaler/action.yml
               with:
                 region: ${{ github.event.inputs.region }}
                 cloud_type: ${{ github.event.inputs.cloud_type }}
