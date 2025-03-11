@@ -8,7 +8,7 @@ on:
                 required: true
                 default: 'GitHub'
     workflow_run:
-        workflows: ["Complex Action Request"] 
+        workflows: ["Request Appoval"] 
         types:
             - completed
 
