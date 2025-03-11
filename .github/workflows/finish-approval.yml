@@ -1,7 +1,7 @@
-name: finish approval
+name: Finish approval
 on:
   workflow_run:
-    workflows: ["SE-Scale GH Action Demo"]
+    workflows: ["Start approval"]
     types:
       - completed
 
@@ -14,4 +14,4 @@ jobs:
             - name: Finish Approval
               run: echo "Approval for greeting has been completed"
             - name: Greet the person
-              run: echo "Hello, ${{ github.event.workflow_run.inputs.name }}!"
+              run: echo "Hello, ${{ github.event.workflow_run.conclusion }}!"
