@@ -28,6 +28,12 @@ on:
                 description: 'Name of the person to greet'
                 required: true
                 default: 'GitHub'
+    workflow_run:
+        workflows: 
+            - "Request Appoval"
+            - "SE-Scaler gRPC Request" 
+        types:
+            - completed
 
 jobs:
     display_input_data:
@@ -77,8 +83,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Scale SE-Server
-              run: |
-                {
-                    echo "Scaling SE-Server to ${{ github.event.inputs.replicas }} replicas"
-                    echo "http://eks-trunk-private-${{ github.event.inputs.region }}.internal.${{ github.event.inputs.cloud_type }}.com/se-scaler"
-                }
+              uses: ./.github/workflows/scale_request_action.yml
+              with:
+                region: ${{ github.event.inputs.region }}
+                cloud_type: ${{ github.event.inputs.cloud_type }}
+                replicas: ${{ github.event.inputs.replicas }}
