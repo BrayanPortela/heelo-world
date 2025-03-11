@@ -1,38 +1,26 @@
-name: Start Scale request
+name: Start approval
 on:
-  workflow_dispatch:
-    inputs:
-      name:
-        description: 'Name of the person to greet'
-        required: true
-        default: 'GitHub'
+    workflow_dispatch:
+        inputs:
+            name:
+                description: 'Name of the person to greet'
+                required: true
+                default: 'GitHub'
 
 jobs:
-  print-input-data:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Report input Data
-        shell: bash
-        run: |
-          {
-            echo "## SE-Scaler requested initiatied by ${{ github.actor }}!"
-            echo "--------------------------------------------------------------------"
-            echo " We're aiming to scale with the following data:"
-            echo "| Input            | Value                           |"
-            echo "|------------------|---------------------------------|"
-            echo "| Name             | ${{ github.event.inputs.name }} |"
-          }
-    
-  request-approvals:
-    needs: print-input-data
-    environment: production
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
-
-      - name: Request approvals
-        uses: ./.github/actions/finish-approval
-        with:
-          name: ${{ github.event.inputs.name }}
-      
+    build:
+        runs-on: ubuntu-latest
+        environment: production  # Reference the environment here
+        outputs:
+            name: ${{ steps.set-output.outputs.name }}
+        steps:
+            - name: Checkout repository code
+              uses: actions/checkout@v4
+            - name: List files in the repository
+              run: |
+                  ls ${{ github.workspace }}
+            - name: Set output
+              id: set-output
+              run: echo "::set-output name=name::${{ github.event.inputs.name }}"
+            - name: Request Approval
+              run: echo "Requesting approval for greeting"

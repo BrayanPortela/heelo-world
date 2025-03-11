@@ -1,0 +1,52 @@
+name: Complex Action Request
+
+on:
+    workflow_dispatch:
+        inputs:
+            name:
+                description: 'Name of the person to greet'
+                required: true
+                default: 'GitHub'
+    workflow_run:
+        workflows: ["Complex Action Request"] 
+        types:
+            - completed
+
+jobs:
+    display_input_data:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Report input Data
+          id: report_input_data
+          shell: bash
+          run: |
+            {
+                echo "## SE-Scaler requested initiatied by ${{ github.actor }}!"
+                echo "--------------------------------------------------------------------"
+                echo " We're aiming to scale with the following data:"
+                echo "| Input            | Value                           |"
+                echo "|------------------|---------------------------------|"
+                echo "| Name             | ${{ github.event.inputs.name }} |"
+            }
+        
+    request-approvals:
+        needs: display_input_data
+        environment: production
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository code
+            uses: actions/checkout@v4
+
+          - name: Request Approvals
+            run: echo "Requesting approvals from Managers"
+
+    finish-approval:
+        if: github.event_name == 'workflow_run'
+        needs: request-approvals
+        runs-on: ubuntu-latest
+        steps:
+          - name: Finish Approval
+            run: echo "Approval for greeting has been completed"
+          
+            - name: Greet the person
+            run: echo "Hello, ${{ github.event.inputs.name }}!"
