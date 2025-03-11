@@ -1,17 +1,18 @@
 name: Finish approval
 on:
   workflow_run:
-    workflows: ["Start approval"]
+    workflows: ["Start Scale request"]
     types:
       - completed
 
 jobs:
-    greet:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository code
-              uses: actions/checkout@v4
-            - name: Finish Approval
-              run: echo "Approval for greeting has been completed"
-            - name: Greet the person
-              run: echo "Hello, ${{ github.event.workflow_run.conclusion }}!"
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        
+      - name: Finish Approval
+        run: echo "Approval for greeting has been completed"
+      - name: Greet the person
+        run: echo "Hello, ${{ github.event.workflow_run }}!"
