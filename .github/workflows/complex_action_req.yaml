@@ -3,10 +3,23 @@ name: Complex Action Request
 on:
     workflow_dispatch:
         inputs:
-            name:
-                description: 'Name of the person to greet'
-                required: true
-                default: 'GitHub'
+            region:
+              description: 'Region where the scale will be executed'
+              required: true
+              type: choice
+              options:
+                - United States
+                - Asia Pacific
+                - Europe
+                - Canada
+            cloud:
+              description: 'Cloud Environment to scale'
+              required: true
+              type: choice
+              options:
+                - Development (Only available for US)
+                - Production
+                - Partner
     workflow_run:
         workflows: ["Request Appoval"] 
         types:
@@ -26,7 +39,8 @@ jobs:
                 echo " We're aiming to scale with the following data:"
                 echo "| Input            | Value                           |"
                 echo "|------------------|---------------------------------|"
-                echo "| Name             | ${{ github.event.inputs.name }} |"
+                echo "| Region           | ${{ github.event.inputs.region }} |"
+                echo "| Cloud-Env        | ${{ github.event.inputs.cloud }} |"
             }
         
     request-approvals:
@@ -53,4 +67,4 @@ jobs:
                 }
           
           - name: Greet the person
-            run: echo "Hello, ${{ github.event.inputs.name }}!"
+            run: echo "REGION- ${{ github.event.inputs.region }} | CLOUD- ${{ github.event.inputs.cloud }}"
