@@ -1,5 +1,9 @@
 name: Complex Action Request
-
+run-name: 'SE-Scaler Request: SE-Scaler-${{inputs.region}}-${{github.created_at}}'
+permissions:
+  contents: read
+  deployments: read
+  id-token: write
 on:
   workflow_dispatch:
     inputs:
@@ -7,7 +11,6 @@ on:
         description: 'Region: Where the scale will be executed'
         required: true
         type: choice
-        default: 'ust1'
         options:
           - ust1
           - usp1
@@ -19,14 +22,14 @@ on:
           - caq1
       replicas:
         description: 'Replicas: Pods to scale to'
+        default: 1
         required: true
         type: number
-        default: '1'
       timeout:
         description: 'Timeout: Request will be cancelled in the specified seconds if not succeeded'
+        default: 300
         required: true
         type: number
-        default: '300'
   workflow_run:
     workflows: ['Request Approval']
     types:
@@ -36,7 +39,7 @@ jobs:
   display_input_data:
     runs-on: ubuntu-latest
     steps:
-      - name: Report Input Data
+      - name: Report input Data
         id: report_input_data
         shell: bash
         run: |
@@ -74,11 +77,5 @@ jobs:
             echo "If you're seeing this, it means your request has been approved"
           }
 
-      - name: Return Data
-        shell: bash
-        run: |
-          {
-              echo "| Region           | ${{ github.event.inputs.region }} |"
-              echo "| Replicas         | ${{ github.event.inputs.replicas }} |"
-              echo "| Timeout          | ${{ github.event.inputs.timeout }} seconds |"
-          }
+      - name: Greet the person
+        run: echo "REGION- ${{ github.event.inputs.region }} | CLOUD- ${{ github.event.inputs.cloud }}"
