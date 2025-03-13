@@ -1,5 +1,5 @@
 name: SE-Scaler 
-run-name: 'SE-Scaler: SE-Scaler-${{ inputs.region }}-${{ github.actor }}-${{ github.event.created_at }}'
+run-name: 'SE-Scaler: SE-Scaler-${{ inputs.region }}-${{ github.actor }}-${{ steps.set_time.outputs.current_time }}'
 permissions:
   contents: read
   deployments: read
@@ -30,13 +30,19 @@ on:
         default: 300
         required: true
         type: number
-  workflow_run:
-    workflows: ['Request Approval']
-    types:
-      - completed
 
 jobs:
+  set_time:
+    runs-on: ubuntu-latest
+    outputs:
+      current_time: ${{ steps.get_time.outputs.current_time }}
+    steps:
+      - name: Get current time
+        id: get_time
+        run: echo "current_time=$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+
   display_input_data:
+    needs: set_time
     runs-on: ubuntu-latest
     steps:
       - name: Report input Data
@@ -78,4 +84,11 @@ jobs:
           }
 
       - name: Greet the person
-        run: echo "REGION- ${{ github.event.inputs.region }} | CLOUD- ${{ github.event.inputs.cloud }}"
+        shell: bash
+        run: |
+          {
+              echo "|------------------|---------------------------------|"
+              echo "| Region           | ${{ github.event.inputs.region }} |"
+              echo "| Replicas         | ${{ github.event.inputs.replicas }} |"
+              echo "| Timeout          | ${{ github.event.inputs.timeout }} seconds |"
+          }
