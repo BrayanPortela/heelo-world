@@ -1,5 +1,5 @@
 name: SE-Scaler 
-run-name: 'SE-Scaler: SE-Scaler-${{ inputs.region }}-${{ github.actor }}-${{ steps.set_time.outputs.current_time }}'
+run-name: 'SE-Scaler: Scale in- ${{ inputs.region }}'
 permissions:
   contents: read
   deployments: read
