@@ -1,70 +1,84 @@
 name: Complex Action Request
 
 on:
-    workflow_dispatch:
-        inputs:
-            region:
-              description: 'Region where the scale will be executed'
-              required: true
-              type: choice
-              options:
-                - United States
-                - Asia Pacific
-                - Europe
-                - Canada
-            cloud:
-              description: 'Cloud Environment to scale'
-              required: true
-              type: choice
-              options:
-                - Development (Only available for US)
-                - Production
-                - Partner
-    workflow_run:
-        workflows: ["Request Appoval"] 
-        types:
-            - completed
+  workflow_dispatch:
+    inputs:
+      region:
+        description: 'Region: Where the scale will be executed'
+        required: true
+        type: choice
+        default: 'ust1'
+        options:
+          - ust1
+          - usp1
+          - eup1
+          - cap1
+          - app1
+          - usq1
+          - euq1
+          - caq1
+      replicas:
+        description: 'Replicas: Pods to scale to'
+        required: true
+        type: number
+        default: '1'
+      timeout:
+        description: 'Timeout: Request will be cancelled in the specified seconds if not succeeded'
+        required: true
+        type: number
+        default: '300'
+  workflow_run:
+    workflows: ['Request Approval']
+    types:
+      - completed
 
 jobs:
-    display_input_data:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Report input Data
-          id: report_input_data
-          shell: bash
-          run: |
-            {
-                echo "## SE-Scaler requested initiatied by ${{ github.actor }}!"
-                echo "--------------------------------------------------------------------"
-                echo " We're aiming to scale with the following data:"
-                echo "| Input            | Value                           |"
-                echo "|------------------|---------------------------------|"
-                echo "| Region           | ${{ github.event.inputs.region }} |"
-                echo "| Cloud-Env        | ${{ github.event.inputs.cloud }} |"
-            }
-        
-    request-approvals:
-        needs: display_input_data
-        environment: production
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout repository code
-            uses: actions/checkout@v4
+  display_input_data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report Input Data
+        id: report_input_data
+        shell: bash
+        run: |
+          {
+              echo "## SE-Scaler requested initiated by ${{ github.actor }}!"
+              echo "--------------------------------------------------------------------"
+              echo " We're aiming to scale with the following data:"
+              echo "| Input            | Value                           |"
+              echo "|------------------|---------------------------------|"
+              echo "| Region           | ${{ github.event.inputs.region }} |"
+              echo "| Replicas         | ${{ github.event.inputs.replicas }} |"
+              echo "| Timeout          | ${{ github.event.inputs.timeout }} seconds |"
+          }
 
-          - name: Request Approvals
-            run: echo "Requesting approvals from Managers"
+  request-approvals:
+    needs: display_input_data
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
 
-    finish-approval:
-        needs: request-approvals
-        runs-on: ubuntu-latest
-        steps:
-          - name: Finished Approval
-            shell: bash
-            run: | 
-                {
-                  echo "Approval status: Approved"
-                  echo "If you're seeing this, it means your request has been approved"
-                }
-          
-          - name: Greet the person
-            run: echo "REGION- ${{ github.event.inputs.region }} | CLOUD- ${{ github.event.inputs.cloud }}"
+      - name: Request Approvals
+        run: echo "Requesting approvals from Managers"
+
+  finish-approval:
+    needs: request-approvals
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finished Approval
+        shell: bash
+        run: |
+          {
+            echo "Approval status: Approved"
+            echo "If you're seeing this, it means your request has been approved"
+          }
+
+      - name: Return Data
+        shell: bash
+        run: |
+          {
+              echo "| Region           | ${{ github.event.inputs.region }} |"
+              echo "| Replicas         | ${{ github.event.inputs.replicas }} |"
+              echo "| Timeout          | ${{ github.event.inputs.timeout }} seconds |"
+          }
