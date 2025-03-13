@@ -1,5 +1,5 @@
-name: SE-Scaler 
-run-name: 'SE-Scaler: Scale in- ${{ inputs.region }}'
+name: SE-Scaler
+run-name: 'SE-Scaler: Requested to scale in ${{ inputs.region }}'
 permissions:
   contents: read
   deployments: read
@@ -22,27 +22,17 @@ on:
           - caq1
       replicas:
         description: 'Replicas: Pods to scale to'
-        default: 1
+        default: '1'
         required: true
         type: number
       timeout:
         description: 'Timeout: Request will be cancelled in the specified seconds if not succeeded'
-        default: 300
+        default: '60'
         required: true
         type: number
 
 jobs:
-  set_time:
-    runs-on: ubuntu-latest
-    outputs:
-      current_time: ${{ steps.get_time.outputs.current_time }}
-    steps:
-      - name: Get current time
-        id: get_time
-        run: echo "current_time=$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
-
   display_input_data:
-    needs: set_time
     runs-on: ubuntu-latest
     steps:
       - name: Report input Data
