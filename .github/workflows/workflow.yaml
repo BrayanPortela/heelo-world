@@ -1,5 +1,5 @@
-name: Complex Action Request
-run-name: 'SE-Scaler Request: SE-Scaler-${{inputs.region}}-${{github.created_at}}'
+name: SE-Scaler 
+run-name: 'SE-Scaler: SE-Scaler-${{ inputs.region }}-${{ github.actor }}-${{ github.event.created_at }}'
 permissions:
   contents: read
   deployments: read
